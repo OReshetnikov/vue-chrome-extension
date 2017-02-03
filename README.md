@@ -17,6 +17,7 @@ add app/dist/chrome into chrome extension,then the app will auto reload with fil
 
 ## File structrue
 
+```html
 ├── LICENSE
 ├── README.md
 ├── app
@@ -26,6 +27,7 @@ add app/dist/chrome into chrome extension,then the app will auto reload with fil
 ├── package.json
 ├── promo
 └── tasks
+```
 
 
 
