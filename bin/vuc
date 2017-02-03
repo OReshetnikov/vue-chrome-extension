@@ -1,0 +1,76 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+var download = require('download-git-repo')
+var chalk = require('chalk')
+var ora = require('ora')
+var path = require('path')
+var jetpack = require('fs-jetpack');
+var inquirer = require('inquirer')
+
+
+
+var _dir = process.cwd()
+
+var done = function(name){
+  console.log()
+  console.log(' install dependencies:')
+  console.log(' $ cd '+name+' && npm install')
+  console.log();
+  console.log(' run the app:')
+  console.log(' $ gulp --watch')
+  console.log()
+}
+
+var run = function(name){
+  var spinner = ora('download template')
+  var _tmp_dir = name=='.'?_dir:path.join(_dir,name);
+  spinner.start()
+  download('cucygh/vue-chrome-extension-example',_tmp_dir,function(err){
+    spinner.stop()
+    if(err){
+      console.log(chalk.red(err));
+      return
+    }else{
+      done(name);
+    }
+  })
+}
+
+program
+  .version(require('../package').version)
+  .usage('init [name]')
+
+
+program
+  .command('init [name]')
+  .description('generate a new chrome-extension project with vue')
+  .action(function(name){
+    name = name || '.'
+
+    if(name == '.'){
+      inquirer.prompt([{
+        type: 'confirm',
+        message: 'Generate project in current directory?',
+        name: 'ok'
+      }]).then(function(answers){
+        if(answers.ok){
+          run(name)
+        }
+      })
+    }else{
+      run(name)
+    }
+  })
+
+program.on('--help',function(){
+  console.log('  Examples:')
+  console.log()
+  console.log(chalk.gray('    # create a new project with an official template'))
+  console.log('    $ vuc init my-project')
+  console.log()
+})
+
+program.parse(process.argv)
+
+if (program.args.length < 1) program.help()
